@@ -6,12 +6,13 @@
 
 QT       += core gui
 
-INCLUDEPATH += "D:/OpenCV2.3/opencv/include"
-INCLUDEPATH += "D:/OpenCV2.3/opencv/modules/core/include"
-INCLUDEPATH += "D:/OpenCV2.3/opencv/modules/highgui/include"
+QMAKE_CXXFLAGS += -std=gnu++0x
+INCLUDEPATH += "E:/My Documents/Programming/OpenCV-MinGW/opencv/include"
+INCLUDEPATH += "E:/My Documents/Programming/OpenCV-MinGW/opencv/modules/core/include"
+INCLUDEPATH += "E:/My Documents/Programming/OpenCV-MinGW/opencv/modules/highgui/include"
 
-LIBS += "D:/OpenCV2.3/mingw-build/lib/libopencv_core230.dll.a"
-LIBS += "D:/OpenCV2.3/mingw-build/lib/libopencv_highgui230.dll.a"
+LIBS += "E:/My Documents/Programming/OpenCV-MinGW/mingw-build/lib/libopencv_core230.dll.a"
+LIBS += "E:/My Documents/Programming/OpenCV-MinGW/mingw-build/lib/libopencv_highgui230.dll.a"
 
 TARGET = Exposure
 TEMPLATE = app

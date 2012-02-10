@@ -13,7 +13,8 @@ void VideoProcessor::run()
     cv::VideoCapture cap(0);
     if (!cap.isOpened())
     {
-        exit(-1);
+        emit error(tr("Can't open video capture device 0"));
+        return;
     }
     cv::namedWindow("Video Window");
     std::list<cv::Mat> buf;
@@ -69,6 +70,6 @@ void VideoProcessor::run()
         case DashMode:
             res = cv::Mat::eye(img.rows, img.cols, img.type()).inv();
         }
-        cv::imshow("window", res);
+        cv::imshow("Video Window", res);
     }
 }

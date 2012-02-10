@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "videoprocessor.h"
 
 namespace Ui {
     class MainWindow;
@@ -10,14 +11,14 @@ namespace Ui {
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
+private:
+    VideoProcessor vp;
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
-
+    void onError(QString mes);
 private:
     Ui::MainWindow *ui;
 };

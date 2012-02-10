@@ -23,7 +23,7 @@ protected:
     void run();
 
 signals:
-
+    void error(QString message);
 public slots:
     void setAverageCnt(int v)
     {
