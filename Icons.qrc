@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/eraser.png</file>
+        <file>icons/faq.png</file>
+        <file>icons/flip-horizontal.png</file>
+        <file>icons/flip-vertical.png</file>
+        <file>icons/video-file.png</file>
+    </qresource>
+</RCC>

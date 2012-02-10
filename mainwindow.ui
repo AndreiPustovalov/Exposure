@@ -6,34 +6,197 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>439</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Control Panel</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="Icons.qrc">
+    <normaloff>:/icons/video-file.png</normaloff>:/icons/video-file.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>220</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PushButton</string>
-    </property>
-   </widget>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QRadioButton" name="simpleModeRadio">
+      <property name="text">
+       <string>Обычный режим</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="averageModeRadio">
+      <property name="text">
+       <string>Наложение</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="statusTip">
+       <string>Параметры наложения</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>N:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="averageCountSlider">
+           <property name="maximum">
+            <number>240</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="averageCountSpinBox">
+           <property name="minimumSize">
+            <size>
+             <width>60</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximum">
+            <number>240</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="infAverageModeRadio">
+      <property name="text">
+       <string>Бесконечное наложение</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="dashModeRadio">
+      <property name="text">
+       <string>Пунктир</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame_3">
+      <property name="statusTip">
+       <string>Параметры пунктира</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Размер окна:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QSlider" name="windowSizeSlider">
+           <property name="maximum">
+            <number>240</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="windowSizeSpinBox">
+           <property name="minimumSize">
+            <size>
+             <width>60</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximum">
+            <number>240</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string> кадров</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Отображаемая часть кадров:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QSlider" name="visiblePartSlider">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>100%</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>439</width>
      <height>20</height>
     </rect>
    </property>
@@ -45,10 +208,89 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionClear"/>
+   <addaction name="actionFlipHorizontal"/>
+   <addaction name="actionFlipVertical"/>
+   <addaction name="separator"/>
+   <addaction name="actionAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionClear">
+   <property name="icon">
+    <iconset resource="Icons.qrc">
+     <normaloff>:/icons/eraser.png</normaloff>:/icons/eraser.png</iconset>
+   </property>
+   <property name="text">
+    <string>Очистить</string>
+   </property>
+   <property name="toolTip">
+    <string>Очистить...</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="Icons.qrc">
+     <normaloff>:/icons/faq.png</normaloff>:/icons/faq.png</iconset>
+   </property>
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionFlipHorizontal">
+   <property name="icon">
+    <iconset resource="Icons.qrc">
+     <normaloff>:/icons/flip-horizontal.png</normaloff>:/icons/flip-horizontal.png</iconset>
+   </property>
+   <property name="text">
+    <string>Отразить по горизонтали</string>
+   </property>
+  </action>
+  <action name="actionFlipVertical">
+   <property name="icon">
+    <iconset resource="Icons.qrc">
+     <normaloff>:/icons/flip-vertical.png</normaloff>:/icons/flip-vertical.png</iconset>
+   </property>
+   <property name="text">
+    <string>Отразить по вертикали</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
- <connections/>
+ <resources>
+  <include location="Icons.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>windowSizeSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>windowSizeSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>301</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>averageCountSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>averageCountSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>359</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>376</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

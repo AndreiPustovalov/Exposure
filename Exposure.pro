@@ -26,4 +26,16 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
+RESOURCES += \
+    Icons.qrc
+
+OTHER_FILES += \
+    icons/video-file.png \
+    icons/flip-vertical.png \
+    icons/flip-horizontal.png \
+    icons/faq.png \
+    icons/eraser.png
+
+
+
 
