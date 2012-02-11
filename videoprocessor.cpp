@@ -1,22 +1,42 @@
 #include "videoprocessor.h"
 #include <opencv/highgui.h>
+#include "CvWindow.hpp"
 #include <algorithm>
+#include <QDebug>
 
 VideoProcessor::VideoProcessor(QObject *parent) :
     QThread(parent),
-    average_cnt(10)
+    average_cnt(10),
+    mode(SimpleMode)
 {
 }
 
 void VideoProcessor::run()
 {
-    cv::VideoCapture cap(0);
+//    cv::VideoCapture cap(0);
+    class MyCap
+    {
+    private:
+        int n;
+    public:
+        MyCap() : n(1) {}
+        bool isOpened()
+        {
+            return true;
+        }
+        MyCap& operator>>(cv::Mat& img)
+        {
+            img = cv::imread(QString("E:\\My Documents\\Programming\\Projects\\Exposure\\imgs\\%1.jpg").arg((n==495)?n=1:n++).toStdString(), -1);
+            return *this;
+        }
+    } cap;
+
     if (!cap.isOpened())
     {
-        emit error(tr("Can't open video capture device 0"));
-        return;
+            emit error(tr("Can't open video capture device"));
+            return;
     }
-    cv::namedWindow("Video Window");
+    CvWindow wnd("Video Window");
     std::list<cv::Mat> buf;
     cv::Mat sum;
     while (true)
@@ -63,13 +83,15 @@ void VideoProcessor::run()
 
         case SimpleMode:
             res = img;
-
+        break;
         case InfAverageMode:
             res = cv::Mat::eye(img.rows, img.cols, img.type());
-
+            break;
         case DashMode:
             res = cv::Mat::eye(img.rows, img.cols, img.type()).inv();
+        break;
         }
-        cv::imshow("Video Window", res);
+        wnd.imshow(res);
     }
+
 }

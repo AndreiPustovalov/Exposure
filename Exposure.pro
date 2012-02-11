@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     videoprocessor.cpp
 
 HEADERS  += mainwindow.h \
-    videoprocessor.h
+    videoprocessor.h \
+    CvWindow.hpp
 
 FORMS    += mainwindow.ui
 
