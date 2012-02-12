@@ -20,11 +20,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    videoprocessor.cpp
+    videoprocessor.cpp \
+    cvwindowthread.cpp
 
 HEADERS  += mainwindow.h \
     videoprocessor.h \
-    CvWindow.hpp
+    CvWindow.hpp \
+    cvwindowthread.h
 
 FORMS    += mainwindow.ui
 

@@ -10,10 +10,20 @@ VideoProcessor::VideoProcessor(QObject *parent) :
     mode(SimpleMode)
 {
 }
-
+class Cntr
+{
+public:
+    int c;
+    Cntr() : c(0){}
+    void operator()(float v)
+    {
+        if (v>=0)
+            ++c;
+    }
+};
 void VideoProcessor::run()
 {
-//    cv::VideoCapture cap(0);
+    //    cv::VideoCapture cap(0);
     class MyCap
     {
     private:
@@ -33,8 +43,8 @@ void VideoProcessor::run()
 
     if (!cap.isOpened())
     {
-            emit error(tr("Can't open video capture device"));
-            return;
+        emit error(tr("Can't open video capture device"));
+        return;
     }
     CvWindow wnd("Video Window");
     std::list<cv::Mat> buf;
@@ -43,6 +53,7 @@ void VideoProcessor::run()
     {
         cv::Mat img, res;
         cap >> img;
+        img.convertTo(img, CV_32FC3, 1.0/255.0);
         int aver_cnt = average_cnt;
         switch (mode)
         {
@@ -51,7 +62,7 @@ void VideoProcessor::run()
                 sum = cv::Mat::zeros(img.rows, img.cols, img.type());
             if ((int)buf.size() < aver_cnt)
             {
-                for (int y = 0; y < img.rows; ++y)
+                /*for (int y = 0; y < img.rows; ++y)
                 {
                     uchar* sumRow = sum.ptr(y);
                     const uchar* imgRow = img.ptr(y);
@@ -59,23 +70,29 @@ void VideoProcessor::run()
                     {
                         sumRow[x] = (buf.size()*sumRow[x] + imgRow[x])/(buf.size()+1);
                     }
-                }
+                }*/
+                sum += img/static_cast<float>(buf.size()+1);
+                float v = static_cast<float>(buf.size()+1)/(2.0+static_cast<float>(buf.size()));
+                qDebug() << v;
+                sum *= v;
             }else
             {
-                cv::Mat frnt = buf.front();
-                for (int y = 0; y < img.rows; ++y)
+                for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
                 {
-                    uchar* sumRow = sum.ptr(y);
-                    const uchar* imgRow = img.ptr(y);
-                    const uchar* frontRow = frnt.ptr(y);
-                    for (int x = 0; x < img.cols*img.channels(); ++x)
+                    cv::Mat frnt = buf.front();
+                    /*for (int y = 0; y < img.rows; ++y)
                     {
-                        sumRow[x] = std::min(255,std::max(0,(aver_cnt*sumRow[x] + imgRow[x] - frontRow[x])/(aver_cnt)));
-                    }
-                }
-                buf.pop_front();
-                if ((int)buf.size() > aver_cnt)
+                        uchar* sumRow = sum.ptr(y);
+                        const uchar* imgRow = img.ptr(y);
+                        const uchar* frontRow = frnt.ptr(y);
+                        for (int x = 0; x < img.cols*img.channels(); ++x)
+                        {
+                            sumRow[x] = std::min(255,std::max(0,(aver_cnt*sumRow[x] + imgRow[x] - frontRow[x])/(aver_cnt)));
+                        }
+                    }*/
+                    sum += (img-frnt)/static_cast<float>(aver_cnt);
                     buf.pop_front();
+                }
             }
             buf.push_back(img.clone());
             res = sum;
@@ -83,14 +100,17 @@ void VideoProcessor::run()
 
         case SimpleMode:
             res = img;
-        break;
+            break;
         case InfAverageMode:
             res = cv::Mat::eye(img.rows, img.cols, img.type());
             break;
         case DashMode:
             res = cv::Mat::eye(img.rows, img.cols, img.type()).inv();
-        break;
+            break;
         }
+        Cntr cntr;
+
+        std::for_each(res.data, res.data+res.cols*res.rows, cntr);
         wnd.imshow(res);
     }
 

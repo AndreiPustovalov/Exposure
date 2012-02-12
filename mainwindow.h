@@ -19,6 +19,8 @@ public:
 
 private slots:
     void onError(QString mes);
+    void radioToggled();
+
 private:
     Ui::MainWindow *ui;
 };

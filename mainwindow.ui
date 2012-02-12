@@ -65,6 +65,9 @@
            <property name="maximum">
             <number>240</number>
            </property>
+           <property name="value">
+            <number>10</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -197,7 +200,7 @@
      <x>0</x>
      <y>0</y>
      <width>439</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -283,8 +286,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>359</x>
-     <y>133</y>
+     <x>352</x>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
      <x>376</x>
@@ -292,5 +295,72 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>averageModeRadio</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>radioToggled()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>simpleModeRadio</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>radioToggled()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>12</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>77</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>infAverageModeRadio</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>radioToggled()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>14</x>
+     <y>164</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dashModeRadio</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>radioToggled()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>16</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>208</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>radioToggled()</slot>
+ </slots>
 </ui>
