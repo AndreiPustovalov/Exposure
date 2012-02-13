@@ -18,16 +18,28 @@ VideoProcessor::VideoProcessor(QObject *parent) :
 {
 }
 
-class SumFunctor
+class AddFunctor
 {
-    cv::Mat &img, &sum;
+    cv::Mat img, sum;
     float cur_size;
 public:
-    SumFunctor(cv::Mat& img, cv::Mat& sum, float bufSize) : img(img), sum(sum), cur_size(bufSize) {}
+    AddFunctor(cv::Mat& sum, cv::Mat& img, float bufSize) : img(img), sum(sum), cur_size(bufSize) {}
     void operator()(int i)
     {
         sum.row(i) += img.row(i)/(cur_size+1);
         sum.row(i) *= (cur_size+1)/(2.0+cur_size);
+    }
+};
+
+class AddSubFunctor
+{
+    cv::Mat img, sum, frnt;
+    float cur_size;
+public:
+    AddSubFunctor(cv::Mat& sum, cv::Mat& img, cv::Mat frnt, float bufSize) : img(img), sum(sum), frnt(frnt), cur_size(bufSize) {}
+    void operator()(int i)
+    {
+        sum.row(i) += (img.row(i)-frnt.row(i))/cur_size;
     }
 };
 
@@ -46,7 +58,7 @@ void VideoProcessor::run()
         }
         MyCap& operator>>(cv::Mat& img)
         {
-            img = cv::imread(QString("C:\\Documents and Settings\\PustovalovAP\\My Documents\\Qt\\Exposure\\imgs\\%1.jpg").arg((n==495)?n=1:n++).toStdString(), -1);
+            img = cv::imread(QString("..\\Exposure\\imgs\\%1.jpg").arg((n==495)?n=1:n++).toStdString(), -1);
             return *this;
         }
     } cap;
@@ -73,19 +85,19 @@ void VideoProcessor::run()
                 sum = cv::Mat::zeros(img.rows, img.cols, img.type());
             if ((int)buf.size() < aver_cnt)
             {
-                QtConcurrent::blockingMap(boost::counting_iterator<int>(0), boost::counting_iterator<int>(img.rows), SumFunctor(img, sum, buf.size()));
- /*               sum += img/static_cast<float>(buf.size()+1);
-                sum *= static_cast<float>(buf.size()+1)/(2.0+static_cast<float>(buf.size()));*/
+                AddFunctor func(sum, img, buf.size());
+                QtConcurrent::blockingMap(boost::counting_iterator<int>(0), boost::counting_iterator<int>(img.rows), func);
             }else
             {
                 for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
                 {
                     cv::Mat frnt = buf.front();
-                    sum += (img-frnt)/static_cast<float>(aver_cnt);
+                    AddSubFunctor func(sum, img, frnt, buf.size());
+                    QtConcurrent::blockingMap(boost::counting_iterator<int>(0), boost::counting_iterator<int>(img.rows), func);
                     buf.pop_front();
                 }
             }
-            buf.push_back(img.clone());
+            buf.push_back(img);
             res = sum;
             break;
 
