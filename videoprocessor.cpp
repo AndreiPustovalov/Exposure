@@ -1,9 +1,13 @@
 #include "videoprocessor.h"
 #include <opencv/highgui.h>
 #include "CvWindow.hpp"
-#include <algorithm>
 #include <QDebug>
-#include <QVector>
+#include <qtconcurrentmap.h>
+#include <boost/iterator/counting_iterator.hpp>
+
+#ifdef QT_NO_CONCURRENT
+#error("No concurrent")
+#endif
 
 VideoProcessor::VideoProcessor(QObject *parent) :
     QThread(parent),
@@ -13,6 +17,19 @@ VideoProcessor::VideoProcessor(QObject *parent) :
     flipH(0)
 {
 }
+
+class SumFunctor
+{
+    cv::Mat &img, &sum;
+    float cur_size;
+public:
+    SumFunctor(cv::Mat& img, cv::Mat& sum, float bufSize) : img(img), sum(sum), cur_size(bufSize) {}
+    void operator()(int i)
+    {
+        sum.row(i) += img.row(i)/(cur_size+1);
+        sum.row(i) *= (cur_size+1)/(2.0+cur_size);
+    }
+};
 
 void VideoProcessor::run()
 {
@@ -48,7 +65,7 @@ void VideoProcessor::run()
         cap >> img;
         img.convertTo(img, CV_32FC3, 1.0/255.0);
         int aver_cnt = average_cnt;
-        QVector<QPair<cv::Mat, cv::Mat>> qwe;
+
         switch (mode)
         {
         case AverageMode:
@@ -56,32 +73,14 @@ void VideoProcessor::run()
                 sum = cv::Mat::zeros(img.rows, img.cols, img.type());
             if ((int)buf.size() < aver_cnt)
             {
-                /*for (int y = 0; y < img.rows; ++y)
-                {
-                    uchar* sumRow = sum.ptr(y);
-                    const uchar* imgRow = img.ptr(y);
-                    for (int x = 0; x < img.cols*img.channels(); ++x)
-                    {
-                        sumRow[x] = (buf.size()*sumRow[x] + imgRow[x])/(buf.size()+1);
-                    }
-                }*/
-                sum += img/static_cast<float>(buf.size()+1);
-                sum *= static_cast<float>(buf.size()+1)/(2.0+static_cast<float>(buf.size()));
+                QtConcurrent::blockingMap(boost::counting_iterator<int>(0), boost::counting_iterator<int>(img.rows), SumFunctor(img, sum, buf.size()));
+ /*               sum += img/static_cast<float>(buf.size()+1);
+                sum *= static_cast<float>(buf.size()+1)/(2.0+static_cast<float>(buf.size()));*/
             }else
             {
                 for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
                 {
                     cv::Mat frnt = buf.front();
-                    /*for (int y = 0; y < img.rows; ++y)
-                    {
-                        uchar* sumRow = sum.ptr(y);
-                        const uchar* imgRow = img.ptr(y);
-                        const uchar* frontRow = frnt.ptr(y);
-                        for (int x = 0; x < img.cols*img.channels(); ++x)
-                        {
-                            sumRow[x] = std::min(255,std::max(0,(aver_cnt*sumRow[x] + imgRow[x] - frontRow[x])/(aver_cnt)));
-                        }
-                    }*/
                     sum += (img-frnt)/static_cast<float>(aver_cnt);
                     buf.pop_front();
                 }
