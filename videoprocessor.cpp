@@ -46,7 +46,7 @@ void VideoProcessor::run()
         }
         MyCap& operator>>(cv::Mat& img)
         {
-            img = cv::imread(QString("E:\\My Documents\\Programming\\Projects\\Exposure\\imgs\\%1.jpg").arg((n==495)?n=1:n++).toStdString(), -1);
+            img = cv::imread(QString("C:\\Documents and Settings\\PustovalovAP\\My Documents\\Qt\\Exposure\\imgs\\%1.jpg").arg((n==495)?n=1:n++).toStdString(), -1);
             return *this;
         }
     } cap;
