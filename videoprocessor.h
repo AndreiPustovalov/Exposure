@@ -14,9 +14,11 @@ public:
         DashMode
     };
 private:
-    int average_cnt;
-    int visible_cnt;
+    volatile int average_cnt;
+    volatile int visible_cnt;
     Mode mode;
+    volatile bool flipV, flipH;
+
 public:
     explicit VideoProcessor(QObject *parent = 0);
 protected:
@@ -38,6 +40,15 @@ public slots:
     void setVisibleCnt(int n)
     {
         visible_cnt = n;
+    }
+    void setFlipVertical(bool f)
+    {
+       flipV = f;
+    }
+
+    void setFlipHorizontal(bool f)
+    {
+        flipH = f;
     }
 };
 

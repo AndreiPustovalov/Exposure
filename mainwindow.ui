@@ -240,6 +240,9 @@
    </property>
   </action>
   <action name="actionFlipHorizontal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="Icons.qrc">
      <normaloff>:/icons/flip-horizontal.png</normaloff>:/icons/flip-horizontal.png</iconset>
@@ -249,6 +252,9 @@
    </property>
   </action>
   <action name="actionFlipVertical">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="Icons.qrc">
      <normaloff>:/icons/flip-vertical.png</normaloff>:/icons/flip-vertical.png</iconset>

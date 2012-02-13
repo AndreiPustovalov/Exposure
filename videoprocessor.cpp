@@ -3,24 +3,17 @@
 #include "CvWindow.hpp"
 #include <algorithm>
 #include <QDebug>
+#include <QVector>
 
 VideoProcessor::VideoProcessor(QObject *parent) :
     QThread(parent),
     average_cnt(10),
-    mode(SimpleMode)
+    mode(SimpleMode),
+    flipV(0),
+    flipH(0)
 {
 }
-class Cntr
-{
-public:
-    int c;
-    Cntr() : c(0){}
-    void operator()(float v)
-    {
-        if (v>=0)
-            ++c;
-    }
-};
+
 void VideoProcessor::run()
 {
     //    cv::VideoCapture cap(0);
@@ -55,6 +48,7 @@ void VideoProcessor::run()
         cap >> img;
         img.convertTo(img, CV_32FC3, 1.0/255.0);
         int aver_cnt = average_cnt;
+        QVector<QPair<cv::Mat, cv::Mat>> qwe;
         switch (mode)
         {
         case AverageMode:
@@ -72,9 +66,7 @@ void VideoProcessor::run()
                     }
                 }*/
                 sum += img/static_cast<float>(buf.size()+1);
-                float v = static_cast<float>(buf.size()+1)/(2.0+static_cast<float>(buf.size()));
-                qDebug() << v;
-                sum *= v;
+                sum *= static_cast<float>(buf.size()+1)/(2.0+static_cast<float>(buf.size()));
             }else
             {
                 for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
@@ -108,9 +100,10 @@ void VideoProcessor::run()
             res = cv::Mat::eye(img.rows, img.cols, img.type()).inv();
             break;
         }
-        Cntr cntr;
-
-        std::for_each(res.data, res.data+res.cols*res.rows, cntr);
+        int lflipV = flipV;
+        int lflipH = flipH;
+        if (lflipV || lflipH)
+            cv::flip(res, res, 2-(lflipH | (lflipV << 1)));
         wnd.imshow(res);
     }
 

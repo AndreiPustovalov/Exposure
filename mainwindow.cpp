@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(&vp, SIGNAL(error(QString)), this, SLOT(onError(QString)));
     connect(ui->averageCountSlider, SIGNAL(valueChanged(int)), &vp, SLOT(setAverageCnt(int)));
+    connect(ui->actionFlipHorizontal, SIGNAL(toggled(bool)), &vp, SLOT(setFlipHorizontal(bool)));
+    connect(ui->actionFlipVertical, SIGNAL(toggled(bool)), &vp, SLOT(setFlipVertical(bool)));
     vp.start();
 }
 
