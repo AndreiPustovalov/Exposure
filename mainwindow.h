@@ -20,6 +20,7 @@ public:
 private slots:
     void onError(QString mes);
     void radioToggled();
+    void on_thresholdSlider_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;

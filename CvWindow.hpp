@@ -10,7 +10,7 @@ private:
 public:
     CvWindow(std::string name) : nm(name)
     {
-        cv::namedWindow(name, CV_WINDOW_NORMAL | CV_WINDOW_FREERATIO /*| CV_GUI_NORMAL*/);
+        cv::namedWindow(name, CV_WINDOW_NORMAL | CV_WINDOW_FREERATIO | CV_GUI_NORMAL);
     }
     CvWindow(std::string& name) : nm(name)
     {

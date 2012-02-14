@@ -12,41 +12,42 @@
 VideoProcessor::VideoProcessor(QObject *parent) :
     QThread(parent),
     average_cnt(10),
-    mode(SimpleMode),
+    gmode(SimpleMode),
     flipV(0),
-    flipH(0)
+    flipH(0),
+    threshold(0.2f)
 {
 }
 
-class AddFunctor
+/*class AddFunctor
 {
-    cv::Mat img, sum;
+    cv::Mat *img, *sum;
     float cur_size;
 public:
-    AddFunctor(cv::Mat& sum, cv::Mat& img, float bufSize) : img(img), sum(sum), cur_size(bufSize) {}
+    AddFunctor(cv::Mat* sum, cv::Mat* img, float bufSize) : img(img), sum(sum), cur_size(bufSize) {}
     void operator()(int i)
     {
-        sum.row(i) += img.row(i)/(cur_size+1);
-        sum.row(i) *= (cur_size+1)/(2.0+cur_size);
+        sum->row(i) += img->row(i)/(cur_size+1);
+        sum->row(i) *= (cur_size+1)/(2.0+cur_size);
     }
 };
 
 class AddSubFunctor
 {
-    cv::Mat img, sum, frnt;
+    cv::Mat *img, *sum, *frnt;
     float cur_size;
 public:
-    AddSubFunctor(cv::Mat& sum, cv::Mat& img, cv::Mat frnt, float bufSize) : img(img), sum(sum), frnt(frnt), cur_size(bufSize) {}
+    AddSubFunctor(cv::Mat* sum, cv::Mat* img, cv::Mat* frnt, float bufSize) : img(img), sum(sum), frnt(frnt), cur_size(bufSize) {}
     void operator()(int i)
     {
-        sum.row(i) += (img.row(i)-frnt.row(i))/cur_size;
+        sum->row(i) += (img->row(i)-frnt->row(i))/cur_size;
     }
-};
+};*/
 
 void VideoProcessor::run()
 {
-    //    cv::VideoCapture cap(0);
-    class MyCap
+    cv::VideoCapture cap(0);
+/*    class MyCap
     {
     private:
         int n;
@@ -61,7 +62,7 @@ void VideoProcessor::run()
             img = cv::imread(QString("..\\Exposure\\imgs\\%1.jpg").arg((n==495)?n=1:n++).toStdString(), -1);
             return *this;
         }
-    } cap;
+    } cap;*/
 
     if (!cap.isOpened())
     {
@@ -69,7 +70,7 @@ void VideoProcessor::run()
         return;
     }
     CvWindow wnd("Video Window");
-    std::list<cv::Mat> buf;
+    QList<cv::Mat> buf;
     cv::Mat sum;
     while (true)
     {
@@ -78,22 +79,24 @@ void VideoProcessor::run()
         img.convertTo(img, CV_32FC3, 1.0/255.0);
         int aver_cnt = average_cnt;
 
+        Mode mode = gmode;
+        if (sum.empty() || mode != lmode)
+        {
+            sum = cv::Mat::zeros(img.rows, img.cols, img.type());
+        }
         switch (mode)
         {
         case AverageMode:
-            if (sum.empty())
-                sum = cv::Mat::zeros(img.rows, img.cols, img.type());
             if ((int)buf.size() < aver_cnt)
             {
-                AddFunctor func(sum, img, buf.size());
-                QtConcurrent::blockingMap(boost::counting_iterator<int>(0), boost::counting_iterator<int>(img.rows), func);
+                sum += img/(static_cast<float>(buf.size())+1);
+                sum *= (static_cast<float>(buf.size())+1)/(2.0+static_cast<float>(buf.size()));
             }else
             {
                 for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
                 {
                     cv::Mat frnt = buf.front();
-                    AddSubFunctor func(sum, img, frnt, buf.size());
-                    QtConcurrent::blockingMap(boost::counting_iterator<int>(0), boost::counting_iterator<int>(img.rows), func);
+                    sum += (img-frnt)/static_cast<float>(buf.size());
                     buf.pop_front();
                 }
             }
@@ -105,12 +108,31 @@ void VideoProcessor::run()
             res = img;
             break;
         case InfAverageMode:
-            res = cv::Mat::eye(img.rows, img.cols, img.type());
-            break;
+        {
+            float lthr = threshold;
+            for (int i = 0; i < img.rows; ++i)
+            {
+                cv::Vec3f* sumRow = sum.ptr<cv::Vec3f>(i);
+                const cv::Vec3f* imgRow = img.ptr<cv::Vec3f>(i);
+                for (int j = 0; j < img.cols; ++j)
+                {
+                    if (norm(imgRow[j])>lthr && norm(sumRow[j]) < 1.0f)
+                    {
+                        sumRow[j] += imgRow[j];
+                        if (norm(sumRow[j])>1.0f)
+                            sumRow[j] *= 1/std::max(sumRow[j][0], std::max(sumRow[j][1], sumRow[j][2]));
+                    }
+                }
+            }
+            res = sum;
+        }
+        break;
+
         case DashMode:
-            res = cv::Mat::eye(img.rows, img.cols, img.type()).inv();
+            res = img;
             break;
         }
+        lmode = mode;
         int lflipV = flipV;
         int lflipH = flipH;
         if (lflipV || lflipH)

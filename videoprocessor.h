@@ -16,8 +16,9 @@ public:
 private:
     volatile int average_cnt;
     volatile int visible_cnt;
-    Mode mode;
+    volatile Mode gmode, lmode;
     volatile bool flipV, flipH;
+    volatile float threshold;
 
 public:
     explicit VideoProcessor(QObject *parent = 0);
@@ -34,7 +35,7 @@ public slots:
 
     void setMode(Mode m)
     {
-        mode = m;
+        gmode = m;
     }
 
     void setVisibleCnt(int n)
@@ -49,6 +50,10 @@ public slots:
     void setFlipHorizontal(bool f)
     {
         flipH = f;
+    }
+    void setThreshold(float t)
+    {
+        threshold = t;
     }
 };
 

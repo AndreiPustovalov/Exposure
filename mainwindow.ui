@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>439</width>
-    <height>341</height>
+    <width>441</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,41 +52,24 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>N:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSlider" name="averageCountSlider">
-           <property name="maximum">
-            <number>240</number>
-           </property>
-           <property name="value">
-            <number>10</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="averageCountSpinBox">
-           <property name="minimumSize">
-            <size>
-             <width>60</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximum">
-            <number>240</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Число кадров:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="averageCountSlider">
+         <property name="maximum">
+          <number>50</number>
+         </property>
+         <property name="value">
+          <number>10</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -99,7 +82,39 @@
      </widget>
     </item>
     <item>
+     <widget class="QFrame" name="frame_2">
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Порог интенсивности:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="thresholdSlider">
+         <property name="value">
+          <number>20</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <widget class="QRadioButton" name="dashModeRadio">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Пунктир</string>
       </property>
@@ -107,6 +122,9 @@
     </item>
     <item>
      <widget class="QFrame" name="frame_3">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="statusTip">
        <string>Параметры пунктира</string>
       </property>
@@ -199,7 +217,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>439</width>
+     <width>441</width>
      <height>21</height>
     </rect>
    </property>
@@ -282,22 +300,6 @@
     <hint type="destinationlabel">
      <x>338</x>
      <y>248</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>averageCountSlider</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>averageCountSpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>352</x>
-     <y>140</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>376</x>
-     <y>133</y>
     </hint>
    </hints>
   </connection>

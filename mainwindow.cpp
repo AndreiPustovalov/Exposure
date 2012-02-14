@@ -41,3 +41,9 @@ void MainWindow::radioToggled()
 
     vp.setMode(m);
 }
+
+
+void MainWindow::on_thresholdSlider_valueChanged(int value)
+{
+    vp.setThreshold((float)value/ui->thresholdSlider->maximum());
+}
