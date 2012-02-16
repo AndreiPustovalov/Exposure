@@ -2,12 +2,7 @@
 #include <opencv/highgui.h>
 #include "CvWindow.hpp"
 #include <QDebug>
-#include <qtconcurrentmap.h>
-#include <boost/iterator/counting_iterator.hpp>
-
-#ifdef QT_NO_CONCURRENT
-#error("No concurrent")
-#endif
+#include <QFile>
 
 VideoProcessor::VideoProcessor(QObject *parent) :
     QThread(parent),
@@ -43,6 +38,11 @@ public:
         sum->row(i) += (img->row(i)-frnt->row(i))/cur_size;
     }
 };*/
+
+bool cmpvec(const cv::Vec3f& a, const cv::Vec3f b)
+{
+    return cv::norm(a) > cv::norm(b);
+}
 
 void VideoProcessor::run()
 {
@@ -109,7 +109,7 @@ void VideoProcessor::run()
             break;
         case InfAverageMode:
         {
-            float lthr = threshold;
+/*            float lthr = threshold;
             for (int i = 0; i < img.rows; ++i)
             {
                 cv::Vec3f* sumRow = sum.ptr<cv::Vec3f>(i);
@@ -122,6 +122,16 @@ void VideoProcessor::run()
                         if (norm(sumRow[j])>1.0f)
                             sumRow[j] *= 1/std::max(sumRow[j][0], std::max(sumRow[j][1], sumRow[j][2]));
                     }
+                }
+            }*/
+            for (int i = 0; i < img.rows; ++i)
+            {
+                cv::Vec3f* sumRow = sum.ptr<cv::Vec3f>(i);
+                const cv::Vec3f* imgRow = img.ptr<cv::Vec3f>(i);
+                for (int j = 0; j < img.cols; ++j)
+                {
+                    if (norm(imgRow[j])>norm(sumRow[j]))
+                        sumRow[j] = imgRow[j];
                 }
             }
             res = sum;
