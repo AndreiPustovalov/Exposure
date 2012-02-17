@@ -19,6 +19,7 @@ private:
     volatile Mode gmode, lmode;
     volatile bool flipV, flipH;
     volatile float threshold;
+    volatile bool clear_flag;
 
 public:
     explicit VideoProcessor(QObject *parent = 0);
@@ -54,6 +55,10 @@ public slots:
     void setThreshold(float t)
     {
         threshold = t;
+    }
+    void clear()
+    {
+        clear_flag = true;
     }
 };
 

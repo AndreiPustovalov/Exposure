@@ -8,8 +8,8 @@ QT       += core gui
 
 #QMAKE_CXXFLAGS += -std=gnu++0x
 
-#include(libs.pro)
-include(libsvc.pro)
+include(libs.pro)
+#include(libsvc.pro)
 
 TARGET = Exposure
 TEMPLATE = app

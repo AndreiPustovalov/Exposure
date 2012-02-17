@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>441</width>
-    <height>420</height>
+    <width>442</width>
+    <height>323</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,6 +60,9 @@
        </item>
        <item>
         <widget class="QSlider" name="averageCountSlider">
+         <property name="minimum">
+          <number>1</number>
+         </property>
          <property name="maximum">
           <number>50</number>
          </property>
@@ -79,35 +82,6 @@
       <property name="text">
        <string>Бесконечное наложение</string>
       </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QFrame" name="frame_2">
-      <property name="frameShape">
-       <enum>QFrame::Box</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Порог интенсивности:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSlider" name="thresholdSlider">
-         <property name="value">
-          <number>20</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
      </widget>
     </item>
     <item>
@@ -138,70 +112,31 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Размер окна:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <widget class="QSlider" name="windowSizeSlider">
-           <property name="maximum">
-            <number>240</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="windowSizeSpinBox">
-           <property name="minimumSize">
-            <size>
-             <width>60</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximum">
-            <number>240</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string> кадров</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Отображаемая часть кадров:</string>
+          <string>Условие:</string>
          </property>
         </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QSlider" name="visiblePartSlider">
-           <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>100</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="lineEdit"/>
          </item>
          <item>
-          <widget class="QLabel" name="label_5">
+          <widget class="QCommandLinkButton" name="commandLinkButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>110</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="text">
-            <string>100%</string>
+            <string>Установить</string>
            </property>
           </widget>
          </item>
@@ -217,8 +152,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>441</width>
-     <height>21</height>
+     <width>442</width>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -287,22 +222,6 @@
   <include location="Icons.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>windowSizeSlider</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>windowSizeSpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>301</x>
-     <y>248</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>338</x>
-     <y>248</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>averageModeRadio</sender>
    <signal>toggled(bool)</signal>

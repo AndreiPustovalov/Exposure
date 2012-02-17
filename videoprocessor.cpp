@@ -2,7 +2,6 @@
 #include <opencv/highgui.h>
 #include "CvWindow.hpp"
 #include <QDebug>
-#include <QFile>
 
 VideoProcessor::VideoProcessor(QObject *parent) :
     QThread(parent),
@@ -10,7 +9,8 @@ VideoProcessor::VideoProcessor(QObject *parent) :
     gmode(SimpleMode),
     flipV(0),
     flipH(0),
-    threshold(0.2f)
+    threshold(0.2f),
+    clear_flag(false)
 {
 }
 
@@ -38,11 +38,6 @@ public:
         sum->row(i) += (img->row(i)-frnt->row(i))/cur_size;
     }
 };*/
-
-bool cmpvec(const cv::Vec3f& a, const cv::Vec3f b)
-{
-    return cv::norm(a) > cv::norm(b);
-}
 
 void VideoProcessor::run()
 {
@@ -80,9 +75,11 @@ void VideoProcessor::run()
         int aver_cnt = average_cnt;
 
         Mode mode = gmode;
-        if (sum.empty() || mode != lmode)
+        if (sum.empty() || mode != lmode || clear_flag)
         {
-            sum = cv::Mat::zeros(img.rows, img.cols, img.type());
+            sum = img.clone();//cv::Mat::zeros(img.rows, img.cols, img.type());
+            buf.clear();
+            clear_flag = false;
         }
         switch (mode)
         {
@@ -109,21 +106,6 @@ void VideoProcessor::run()
             break;
         case InfAverageMode:
         {
-/*            float lthr = threshold;
-            for (int i = 0; i < img.rows; ++i)
-            {
-                cv::Vec3f* sumRow = sum.ptr<cv::Vec3f>(i);
-                const cv::Vec3f* imgRow = img.ptr<cv::Vec3f>(i);
-                for (int j = 0; j < img.cols; ++j)
-                {
-                    if (norm(imgRow[j])>lthr && norm(sumRow[j]) < 1.0f)
-                    {
-                        sumRow[j] += imgRow[j];
-                        if (norm(sumRow[j])>1.0f)
-                            sumRow[j] *= 1/std::max(sumRow[j][0], std::max(sumRow[j][1], sumRow[j][2]));
-                    }
-                }
-            }*/
             for (int i = 0; i < img.rows; ++i)
             {
                 cv::Vec3f* sumRow = sum.ptr<cv::Vec3f>(i);
@@ -146,8 +128,12 @@ void VideoProcessor::run()
         int lflipV = flipV;
         int lflipH = flipH;
         if (lflipV || lflipH)
-            cv::flip(res, res, 2-(lflipH | (lflipV << 1)));
-        wnd.imshow(res);
+        {
+            cv::Mat flippedRes;
+            cv::flip(res, flippedRes, 2-(lflipH | (lflipV << 1)));
+            wnd.imshow(flippedRes);
+        }else
+            wnd.imshow(res);
     }
 
 }
