@@ -1,6 +1,4 @@
 #include "videoprocessor.h"
-#include <opencv/highgui.h>
-#include "CvWindow.hpp"
 #include <QDebug>
 
 VideoProcessor::VideoProcessor(QObject *parent) :
@@ -10,8 +8,15 @@ VideoProcessor::VideoProcessor(QObject *parent) :
     flipV(0),
     flipH(0),
     threshold(0.2f),
-    clear_flag(false)
+    clear_flag(false),
+    running(false),
+    wnd("VideoWindow")
 {
+}
+
+VideoProcessor::~VideoProcessor()
+{
+    stop();
 }
 
 /*class AddFunctor
@@ -41,7 +46,6 @@ public:
 
 void VideoProcessor::run()
 {
-    cv::VideoCapture cap(0);
 /*    class MyCap
     {
     private:
@@ -59,15 +63,16 @@ void VideoProcessor::run()
         }
     } cap;*/
 
+    running = true;
+    cv::VideoCapture cap(0);
     if (!cap.isOpened())
     {
         emit error(tr("Can't open video capture device"));
         return;
     }
-    CvWindow wnd("Video Window");
     QList<cv::Mat> buf;
     cv::Mat sum;
-    while (true)
+    while (running)
     {
         cv::Mat img, res;
         cap >> img;
@@ -134,6 +139,14 @@ void VideoProcessor::run()
             wnd.imshow(flippedRes);
         }else
             wnd.imshow(res);
+        emit needWaitKey();
+        msleep(10);
     }
+    wnd.destroyWindow();
+}
 
+bool VideoProcessor::stop(unsigned long waitTime)
+{
+    running = false;
+    return wait(waitTime);
 }

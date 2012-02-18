@@ -2,6 +2,8 @@
 #define VIDEOPROCESSOR_H
 
 #include <QThread>
+#include <opencv/highgui.h>
+#include "CvWindow.hpp"
 
 class VideoProcessor : public QThread
 {
@@ -19,15 +21,17 @@ private:
     volatile Mode gmode, lmode;
     volatile bool flipV, flipH;
     volatile float threshold;
-    volatile bool clear_flag;
-
+    volatile bool clear_flag, running;
+    CvWindow wnd;
 public:
     explicit VideoProcessor(QObject *parent = 0);
+    ~VideoProcessor();
 protected:
     void run();
 
 signals:
     void error(QString message);
+    void needWaitKey();
 public slots:
     void setAverageCnt(int v)
     {
@@ -60,6 +64,7 @@ public slots:
     {
         clear_flag = true;
     }
+    bool stop(unsigned long waitTime = ULONG_MAX);
 };
 
 #endif // VIDEOPROCESSOR_H

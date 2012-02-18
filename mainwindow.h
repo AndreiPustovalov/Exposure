@@ -20,6 +20,7 @@ public:
 private slots:
     void onError(QString mes);
     void radioToggled();
+    void callWaitKey();
 
 private:
     Ui::MainWindow *ui;

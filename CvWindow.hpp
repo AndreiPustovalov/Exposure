@@ -18,7 +18,7 @@ public:
     }
     ~CvWindow()
     {
-        cv::destroyWindow(nm);
+        destroyWindow();
     }
 
     std::string& name()
@@ -28,7 +28,10 @@ public:
     void imshow(cv::Mat img)
     {
         cv::imshow(nm, img);
-        cv::waitKey(1);
+    }
+    void destroyWindow()
+    {
+        cv::destroyWindow(nm);
     }
 };
 

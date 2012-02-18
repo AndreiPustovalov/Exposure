@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionFlipHorizontal, SIGNAL(toggled(bool)), &vp, SLOT(setFlipHorizontal(bool)));
     connect(ui->actionFlipVertical, SIGNAL(toggled(bool)), &vp, SLOT(setFlipVertical(bool)));
     connect(ui->actionClear, SIGNAL(triggered()), &vp, SLOT(clear()));
+    connect(&vp, SIGNAL(needWaitKey()), this, SLOT(callWaitKey()), Qt::QueuedConnection);
     vp.start();
 }
 
@@ -41,4 +42,9 @@ void MainWindow::radioToggled()
         m = VideoProcessor::InfAverageMode;
 
     vp.setMode(m);
+}
+
+void MainWindow::callWaitKey()
+{
+    cv::waitKey(5);
 }
