@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "videoprocessor.h"
 #include <QMessageBox>
+#include <QCloseEvent>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,12 +16,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionFlipHorizontal, SIGNAL(toggled(bool)), &vp, SLOT(setFlipHorizontal(bool)));
     connect(ui->actionFlipVertical, SIGNAL(toggled(bool)), &vp, SLOT(setFlipVertical(bool)));
     connect(ui->actionClear, SIGNAL(triggered()), &vp, SLOT(clear()));
-    connect(&vp, SIGNAL(needWaitKey()), this, SLOT(callWaitKey()), Qt::QueuedConnection);
+    connect(ui->actionFullScreen, SIGNAL(toggled(bool)), &vp, SLOT(setFullScreen(bool)));
+    connect(&vp, SIGNAL(needWaitKey()), this, SLOT(callWaitKey()), Qt::BlockingQueuedConnection);
     vp.start();
 }
 
 MainWindow::~MainWindow()
 {
+    qDebug() << "Main window destructor";
     delete ui;
 }
 
@@ -46,5 +50,15 @@ void MainWindow::radioToggled()
 
 void MainWindow::callWaitKey()
 {
-    cv::waitKey(5);
+    if (cv::waitKey(5) == 13)
+    {
+        ui->actionFullScreen->toggle();
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    qDebug() << "Close main window";
+    vp.stop();
+    event->accept();
 }

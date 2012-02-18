@@ -9,14 +9,17 @@ VideoProcessor::VideoProcessor(QObject *parent) :
     flipH(0),
     threshold(0.2f),
     clear_flag(false),
-    running(false),
+    running(true),
     wnd("VideoWindow")
 {
+    cap.open(0);
 }
 
 VideoProcessor::~VideoProcessor()
 {
-    stop();
+    qDebug() << "VedioProcessor destructor";
+    if (isRunning())
+        wait();
 }
 
 /*class AddFunctor
@@ -63,8 +66,6 @@ void VideoProcessor::run()
         }
     } cap;*/
 
-    running = true;
-    cv::VideoCapture cap(0);
     if (!cap.isOpened())
     {
         emit error(tr("Can't open video capture device"));
@@ -139,14 +140,19 @@ void VideoProcessor::run()
             wnd.imshow(flippedRes);
         }else
             wnd.imshow(res);
-        emit needWaitKey();
-        msleep(10);
+
+        if (running)
+        {
+            emit needWaitKey();
+        }
     }
+    qDebug() << "Thread loop end";
     wnd.destroyWindow();
+    qDebug() << "Thread end";
 }
 
-bool VideoProcessor::stop(unsigned long waitTime)
+void VideoProcessor::stop()
 {
     running = false;
-    return wait(waitTime);
+    qDebug() << "Stop thread";
 }

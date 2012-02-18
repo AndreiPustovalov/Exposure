@@ -167,6 +167,7 @@
    <addaction name="actionClear"/>
    <addaction name="actionFlipHorizontal"/>
    <addaction name="actionFlipVertical"/>
+   <addaction name="actionFullScreen"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
   </widget>
@@ -214,6 +215,24 @@
    </property>
    <property name="text">
     <string>Отразить по вертикали</string>
+   </property>
+  </action>
+  <action name="actionFullScreen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Icons.qrc">
+     <normaloff>:/icons/full-screen.png</normaloff>:/icons/full-screen.png</iconset>
+   </property>
+   <property name="text">
+    <string>На вксь экран</string>
+   </property>
+   <property name="toolTip">
+    <string>На весь экран</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Return</string>
    </property>
   </action>
  </widget>

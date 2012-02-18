@@ -13,6 +13,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 private:
     VideoProcessor vp;
+protected:
+    void closeEvent ( QCloseEvent *);
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

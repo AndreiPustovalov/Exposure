@@ -22,6 +22,7 @@ private:
     volatile bool flipV, flipH;
     volatile float threshold;
     volatile bool clear_flag, running;
+    cv::VideoCapture cap;
     CvWindow wnd;
 public:
     explicit VideoProcessor(QObject *parent = 0);
@@ -64,7 +65,16 @@ public slots:
     {
         clear_flag = true;
     }
-    bool stop(unsigned long waitTime = ULONG_MAX);
+    bool getFullScreen()
+    {
+        return wnd.getFullScreen();
+    }
+    void setFullScreen(bool fullScreen)
+    {
+        wnd.setFullScreen(fullScreen);
+    }
+
+    void stop();
 };
 
 #endif // VIDEOPROCESSOR_H

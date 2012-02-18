@@ -33,7 +33,9 @@ OTHER_FILES += \
     icons/flip-vertical.png \
     icons/flip-horizontal.png \
     icons/faq.png \
-    icons/eraser.png
+    icons/eraser.png \
+    icons/full-screen.png
+
 
 
 
