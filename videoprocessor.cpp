@@ -22,50 +22,8 @@ VideoProcessor::~VideoProcessor()
         wait();
 }
 
-/*class AddFunctor
-{
-    cv::Mat *img, *sum;
-    float cur_size;
-public:
-    AddFunctor(cv::Mat* sum, cv::Mat* img, float bufSize) : img(img), sum(sum), cur_size(bufSize) {}
-    void operator()(int i)
-    {
-        sum->row(i) += img->row(i)/(cur_size+1);
-        sum->row(i) *= (cur_size+1)/(2.0+cur_size);
-    }
-};
-
-class AddSubFunctor
-{
-    cv::Mat *img, *sum, *frnt;
-    float cur_size;
-public:
-    AddSubFunctor(cv::Mat* sum, cv::Mat* img, cv::Mat* frnt, float bufSize) : img(img), sum(sum), frnt(frnt), cur_size(bufSize) {}
-    void operator()(int i)
-    {
-        sum->row(i) += (img->row(i)-frnt->row(i))/cur_size;
-    }
-};*/
-
 void VideoProcessor::run()
 {
-/*    class MyCap
-    {
-    private:
-        int n;
-    public:
-        MyCap() : n(1) {}
-        bool isOpened()
-        {
-            return true;
-        }
-        MyCap& operator>>(cv::Mat& img)
-        {
-            img = cv::imread(QString("..\\Exposure\\imgs\\%1.jpg").arg((n==495)?n=1:n++).toStdString(), -1);
-            return *this;
-        }
-    } cap;*/
-
     if (!cap.isOpened())
     {
         emit error(tr("Can't open video capture device"));
@@ -112,7 +70,8 @@ void VideoProcessor::run()
             break;
         case InfAverageMode:
         {
-            for (int i = 0; i < img.rows; ++i)
+            sum = cv::max(sum, img);
+            /*for (int i = 0; i < img.rows; ++i)
             {
                 cv::Vec3f* sumRow = sum.ptr<cv::Vec3f>(i);
                 const cv::Vec3f* imgRow = img.ptr<cv::Vec3f>(i);
@@ -121,7 +80,7 @@ void VideoProcessor::run()
                     if (norm(imgRow[j])>norm(sumRow[j]))
                         sumRow[j] = imgRow[j];
                 }
-            }
+            }*/
             res = sum;
         }
         break;

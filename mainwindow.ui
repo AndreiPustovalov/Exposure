@@ -122,19 +122,7 @@
           <widget class="QLineEdit" name="lineEdit"/>
          </item>
          <item>
-          <widget class="QCommandLinkButton" name="commandLinkButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>110</width>
-             <height>16777215</height>
-            </size>
-           </property>
+          <widget class="QPushButton" name="setCondition">
            <property name="text">
             <string>Установить</string>
            </property>
@@ -153,7 +141,7 @@
      <x>0</x>
      <y>0</y>
      <width>442</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
