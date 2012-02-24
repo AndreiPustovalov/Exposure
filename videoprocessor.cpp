@@ -22,6 +22,23 @@ VideoProcessor::~VideoProcessor()
         wait();
 }
 
+class comp
+{
+private:
+    int i,j;
+public:
+    comp(int i, int j) : i(i), j(j) {}
+    bool operator()(const cv::Mat& a, const cv::Mat& b)
+    {
+        return norm(a.at<cv::Vec3b>(i,j)) < norm(b.at<cv::Vec3b>(i,j));
+    }
+};
+
+bool Vec3bComp(const cv::Vec3b& a, const cv::Vec3b& b)
+{
+    return norm(a) < norm(b);
+}
+
 void VideoProcessor::run()
 {
     if (!cap.isOpened())
@@ -35,7 +52,7 @@ void VideoProcessor::run()
     {
         cv::Mat img, res;
         cap >> img;
-        img.convertTo(img, CV_32FC3, 1.0/255.0);
+        //        img.convertTo(img, CV_32FC3, 1.0/255.0);
         int aver_cnt = average_cnt;
 
         Mode mode = gmode;
@@ -50,18 +67,30 @@ void VideoProcessor::run()
         case AverageMode:
             if ((int)buf.size() < aver_cnt)
             {
-                sum += img/(static_cast<float>(buf.size())+1);
-                sum *= (static_cast<float>(buf.size())+1)/(2.0+static_cast<float>(buf.size()));
+                sum = cv::max(sum, img);
+                buf.push_back(img);
             }else
             {
+                buf.push_back(img);
                 for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
                 {
-                    cv::Mat frnt = buf.front();
-                    sum += (img-frnt)/static_cast<float>(buf.size());
+                    cv::Mat front = buf.front();
                     buf.pop_front();
+                    for (int i = 0; i < img.rows; ++i)
+                    {
+                        cv::Vec3b* sumRow = sum.ptr<cv::Vec3b>(i);
+                        cv::Vec3b* imgRow = img.ptr<cv::Vec3b>(i);
+                        cv::Vec3b* frontRow = front.ptr<cv::Vec3b>(i);
+                        for (int j = 0; j < img.cols; ++j)
+                        {
+                            if (sumRow[j] == frontRow[j])
+                                sumRow[j] = *std::max_element(buf.begin(), buf.end(), comp(i,j));
+                            else
+                                sumRow[j] = std::max(imgRow[j], sumRow[j], Vec3bComp);
+                        }
+                    }
                 }
             }
-            buf.push_back(img);
             res = sum;
             break;
 
@@ -71,19 +100,9 @@ void VideoProcessor::run()
         case InfAverageMode:
         {
             sum = cv::max(sum, img);
-            /*for (int i = 0; i < img.rows; ++i)
-            {
-                cv::Vec3f* sumRow = sum.ptr<cv::Vec3f>(i);
-                const cv::Vec3f* imgRow = img.ptr<cv::Vec3f>(i);
-                for (int j = 0; j < img.cols; ++j)
-                {
-                    if (norm(imgRow[j])>norm(sumRow[j]))
-                        sumRow[j] = imgRow[j];
-                }
-            }*/
             res = sum;
         }
-        break;
+            break;
 
         case DashMode:
             res = img;
