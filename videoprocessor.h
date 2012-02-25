@@ -4,6 +4,7 @@
 #include <QThread>
 #include <opencv/highgui.h>
 #include "CvWindow.hpp"
+#include <QMutex>
 
 class VideoProcessor : public QThread
 {
@@ -24,6 +25,10 @@ private:
     volatile bool clear_flag, running;
     cv::VideoCapture cap;
     CvWindow wnd;
+    QString m_condition;
+    QMutex m_conditionMutex;
+    volatile bool m_conditionChanged;
+
 public:
     explicit VideoProcessor(QObject *parent = 0);
     ~VideoProcessor();
@@ -73,6 +78,7 @@ public slots:
     {
         wnd.setFullScreen(fullScreen);
     }
+    void setCondition(QString& condition);
 
     void stop();
 };

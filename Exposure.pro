@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-#QMAKE_CXXFLAGS += -std=gnu++0x
+QMAKE_CXXFLAGS += -std=gnu++0x
 
 include(libs.pro)
 #include(libsvc.pro)
@@ -17,11 +17,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    videoprocessor.cpp
+    videoprocessor.cpp \
+    calc.cpp
 
 HEADERS  += mainwindow.h \
     videoprocessor.h \
-    CvWindow.hpp
+    CvWindow.hpp \
+    operations.hpp \
+    calc.h
 
 FORMS    += mainwindow.ui
 
@@ -35,6 +38,9 @@ OTHER_FILES += \
     icons/faq.png \
     icons/eraser.png \
     icons/full-screen.png
+
+
+
 
 
 

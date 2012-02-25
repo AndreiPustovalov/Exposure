@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QDebug>
+#include "calc.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -40,8 +41,6 @@ void MainWindow::radioToggled()
         m = VideoProcessor::SimpleMode;
     if (ui->averageModeRadio->isChecked())
         m = VideoProcessor::AverageMode;
-    if (ui->dashModeRadio->isChecked())
-        m = VideoProcessor::DashMode;
     if (ui->infAverageModeRadio->isChecked())
         m = VideoProcessor::InfAverageMode;
 
@@ -61,4 +60,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
     qDebug() << "Close main window";
     vp.stop();
     event->accept();
+}
+
+void MainWindow::on_lineEdit_textChanged(const QString &arg1)
+{
+    bool ok;
+    ui->debugLbl->setText(QString().setNum(Calc::Instance().evaluate(arg1, ok)));
+    if (!ok)
+        ui->debugLbl->setText("err");
 }

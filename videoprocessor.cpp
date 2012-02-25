@@ -1,5 +1,8 @@
 #include "videoprocessor.h"
 #include <QDebug>
+#include <QMutexLocker>
+#include <QStringList>
+#include <calc.h>
 
 VideoProcessor::VideoProcessor(QObject *parent) :
     QThread(parent),
@@ -10,7 +13,8 @@ VideoProcessor::VideoProcessor(QObject *parent) :
     threshold(0.2f),
     clear_flag(false),
     running(true),
-    wnd("VideoWindow")
+    wnd("VideoWindow"),
+    m_conditionChanged(false)
 {
     cap.open(0);
 }
@@ -47,15 +51,22 @@ void VideoProcessor::run()
     {
         cv::Mat img, res;
         cap >> img;
-        //        img.convertTo(img, CV_32FC3, 1.0/255.0);
         int aver_cnt = average_cnt;
 
         Mode mode = gmode;
         if (sum.empty() || mode != lmode || clear_flag)
         {
-            sum = img.clone();//cv::Mat::zeros(img.rows, img.cols, img.type());
+            sum = img.clone();
             buf.clear();
             clear_flag = false;
+        }
+
+        QString lCond;
+        if (m_conditionChanged)
+        {
+            QMutexLocker locker(&m_conditionMutex);
+            lCond = m_condition;
+            m_conditionChanged = false;
         }
         switch (mode)
         {
@@ -127,4 +138,11 @@ void VideoProcessor::stop()
 {
     running = false;
     qDebug() << "Stop thread";
+}
+
+void VideoProcessor::setCondition(QString &condition)
+{
+    QMutexLocker locker(&m_conditionMutex);
+    m_condition = condition;
+    m_conditionChanged = true;
 }
