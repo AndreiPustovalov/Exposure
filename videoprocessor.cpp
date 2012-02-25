@@ -30,14 +30,9 @@ public:
     comp(int i, int j) : i(i), j(j) {}
     bool operator()(const cv::Mat& a, const cv::Mat& b)
     {
-        return norm(a.at<cv::Vec3b>(i,j)) < norm(b.at<cv::Vec3b>(i,j));
+        return a.at<uchar>(i,j) < b.at<uchar>(i,j);
     }
 };
-
-bool Vec3bComp(const cv::Vec3b& a, const cv::Vec3b& b)
-{
-    return norm(a) < norm(b);
-}
 
 void VideoProcessor::run()
 {
@@ -65,28 +60,27 @@ void VideoProcessor::run()
         switch (mode)
         {
         case AverageMode:
+            buf.push_back(img.clone());
             if ((int)buf.size() < aver_cnt)
             {
                 sum = cv::max(sum, img);
-                buf.push_back(img);
             }else
             {
-                buf.push_back(img);
                 for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
                 {
                     cv::Mat front = buf.front();
                     buf.pop_front();
                     for (int i = 0; i < img.rows; ++i)
                     {
-                        cv::Vec3b* sumRow = sum.ptr<cv::Vec3b>(i);
-                        cv::Vec3b* imgRow = img.ptr<cv::Vec3b>(i);
-                        cv::Vec3b* frontRow = front.ptr<cv::Vec3b>(i);
-                        for (int j = 0; j < img.cols; ++j)
+                        uchar* sumRow = sum.ptr<uchar>(i);
+                        uchar* imgRow = img.ptr<uchar>(i);
+                        uchar* frontRow = front.ptr<uchar>(i);
+                        for (int j = 0; j < img.cols * img.channels(); ++j)
                         {
                             if (sumRow[j] == frontRow[j])
-                                sumRow[j] = *std::max_element(buf.begin(), buf.end(), comp(i,j));
+                                sumRow[j] = std::max_element(buf.begin(), buf.end(), comp(i,j))->at<uchar>(i,j);
                             else
-                                sumRow[j] = std::max(imgRow[j], sumRow[j], Vec3bComp);
+                                sumRow[j] = std::max(imgRow[j], sumRow[j]);
                         }
                     }
                 }
