@@ -32,6 +32,10 @@ private:
 public:
     explicit VideoProcessor(QObject *parent = 0);
     ~VideoProcessor();
+    bool getFullScreen()
+    {
+        return wnd.getFullScreen();
+    }
 protected:
     void run();
 
@@ -69,10 +73,6 @@ public slots:
     void clear()
     {
         clear_flag = true;
-    }
-    bool getFullScreen()
-    {
-        return wnd.getFullScreen();
     }
     void setFullScreen(bool fullScreen)
     {

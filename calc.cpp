@@ -10,6 +10,11 @@ Calc::Calc()
     operations.insert(new OperationMoreEq());
     operations.insert(new OperationEq());
     operations.insert(new OperationNotEq());
+    operations.insert(new OperationMul());
+    operations.insert(new OperationDiv());
+    operations.insert(new OperationMod());
+    operations.insert(new OperationAdd());
+    operations.insert(new OperationSub());
 }
 
 Calc::Calc(Calc&)

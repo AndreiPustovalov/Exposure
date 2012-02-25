@@ -60,7 +60,7 @@ class OperationLess : public Operation
 public:
     OperationLess() { m_str = "<"; }
     virtual int getPriority() { return 1; }
-    virtual bool fast(int left, int& result)
+    virtual bool fast(int, int&)
     {
         return false;
     }
@@ -76,7 +76,7 @@ class OperationMore : public Operation
 public:
     OperationMore() { m_str = ">"; }
     virtual int getPriority() { return 1; }
-    virtual bool fast(int left, int& result)
+    virtual bool fast(int, int&)
     {
         return false;
     }
@@ -92,7 +92,7 @@ class OperationLessEq : public Operation
 public:
     OperationLessEq() { m_str = "<="; }
     virtual int getPriority() { return 1; }
-    virtual bool fast(int left, int& result)
+    virtual bool fast(int, int&)
     {
         return false;
     }
@@ -108,7 +108,7 @@ class OperationMoreEq : public Operation
 public:
     OperationMoreEq() { m_str = ">="; }
     virtual int getPriority() { return 1; }
-    virtual bool fast(int left, int& result)
+    virtual bool fast(int, int&)
     {
         return false;
     }
@@ -124,7 +124,7 @@ class OperationEq : public Operation
 public:
     OperationEq() { m_str = "=="; }
     virtual int getPriority() { return 1; }
-    virtual bool fast(int left, int& result)
+    virtual bool fast(int, int&)
     {
         return false;
     }
@@ -140,7 +140,7 @@ class OperationNotEq : public Operation
 public:
     OperationNotEq() { m_str = "!="; }
     virtual int getPriority() { return 1; }
-    virtual bool fast(int left, int& result)
+    virtual bool fast(int, int&)
     {
         return false;
     }
@@ -151,4 +151,96 @@ public:
     }
 };
 
+class OperationAdd : public Operation
+{
+public:
+    OperationAdd() { m_str = "+"; }
+    virtual int getPriority() { return 2; }
+    virtual bool fast(int, int&)
+    {
+        return false;
+    }
+
+    virtual int operator()(int left, int right)
+    {
+        return left + right;
+    }
+};
+
+class OperationSub : public Operation
+{
+public:
+    OperationSub() { m_str = "-"; }
+    virtual int getPriority() { return 2; }
+    virtual bool fast(int, int&)
+    {
+        return false;
+    }
+
+    virtual int operator()(int left, int right)
+    {
+        return left - right;
+    }
+};
+
+class OperationMul : public Operation
+{
+public:
+    OperationMul() { m_str = "*"; }
+    virtual int getPriority() { return 3; }
+    virtual bool fast(int left, int& result)
+    {
+        if (left == 0)
+        {
+            result = 0;
+            return true;
+        }
+        return false;
+    }
+
+    virtual int operator()(int left, int right)
+    {
+        return left * right;
+    }
+};
+
+class OperationDiv : public Operation
+{
+public:
+    OperationDiv() { m_str = "/"; }
+    virtual int getPriority() { return 3; }
+    virtual bool fast(int left, int& result)
+    {
+        if (left == 0)
+        {
+            result = 0;
+            return true;
+        }
+        return false;
+    }
+
+    virtual int operator()(int left, int right)
+    {
+        if (right > 0)
+            return left / right;
+        else
+            return 0;
+    }
+};
+
+class OperationMod : public Operation
+{
+public:
+    OperationMod() { m_str = "%"; }
+    virtual int getPriority() { return 3; }
+    virtual bool fast(int, int&)
+    {
+        return false;
+    }
+
+    virtual int operator()(int left, int right)
+    {
+        return left % right;
+    }
+};
 #endif // OPERATIONS_HPP
