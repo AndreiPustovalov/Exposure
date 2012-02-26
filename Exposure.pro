@@ -4,10 +4,24 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
+CONFIG   += thread
 
-include(libs.pro)
-#include(libsvc.pro)
+INCLUDEPATH += "E:/Libs/opencv/include"
+INCLUDEPATH += "E:/Libs/opencv/modules/core/include"
+INCLUDEPATH += "E:/Libs/opencv/modules/highgui/include"
+
+declarative_debug {
+    message("debug_build")
+    LIBS += "E:/Libs/opencv/build/lib/Debug/opencv_core233d.lib"
+    LIBS += "E:/Libs/opencv/build/lib/Debug/opencv_highgui233d.lib"
+}
+
+!declarative_debug {
+    message("release_build")
+    LIBS += "E:/Libs/opencv/build/lib/Release/opencv_core233.lib"
+    LIBS += "E:/Libs/opencv/build/lib/Release/opencv_highgui233.lib"
+}
 
 TARGET = Exposure
 TEMPLATE = app
@@ -16,13 +30,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     videoprocessor.cpp \
-    calc.cpp
+    calc.cpp \
+    cvwindow.cpp
 
 HEADERS  += mainwindow.h \
     videoprocessor.h \
-    CvWindow.hpp \
     operations.hpp \
-    calc.h
+    calc.h \
+    cvwindow.h
 
 FORMS    += mainwindow.ui
 

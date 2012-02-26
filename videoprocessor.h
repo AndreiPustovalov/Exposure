@@ -3,7 +3,7 @@
 
 #include <QThread>
 #include <opencv/highgui.h>
-#include "CvWindow.hpp"
+#include "cvwindow.h"
 #include <QMutex>
 
 class VideoProcessor : public QThread
@@ -13,8 +13,7 @@ public:
     enum Mode{
         SimpleMode,
         AverageMode,
-        InfAverageMode,
-        DashMode
+        InfAverageMode
     };
 private:
     volatile int average_cnt;
@@ -36,12 +35,15 @@ public:
     {
         return wnd.getFullScreen();
     }
+    const CvWindow& getWnd() const
+    {
+        return wnd;
+    }
 protected:
     void run();
 
 signals:
     void error(QString message);
-    void needWaitKey();
 public slots:
     void setAverageCnt(int v)
     {

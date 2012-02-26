@@ -13,7 +13,7 @@ VideoProcessor::VideoProcessor(QObject *parent) :
     threshold(0.2f),
     clear_flag(false),
     running(true),
-    wnd("VideoWindow"),
+    wnd(this, std::string("VideoWindow")),
     m_conditionChanged(false)
 {
     cap.open(0);
@@ -25,18 +25,6 @@ VideoProcessor::~VideoProcessor()
     if (isRunning())
         wait();
 }
-
-class comp
-{
-private:
-    int i,j;
-public:
-    comp(int i, int j) : i(i), j(j) {}
-    bool operator()(const cv::Mat& a, const cv::Mat& b)
-    {
-        return a.at<uchar>(i,j) < b.at<uchar>(i,j);
-    }
-};
 
 void VideoProcessor::run()
 {
@@ -72,50 +60,36 @@ void VideoProcessor::run()
         {
         case AverageMode:
             buf.push_back(img.clone());
-            if ((int)buf.size() < aver_cnt)
+            if ((int)buf.size() <= aver_cnt)
             {
                 sum = cv::max(sum, img);
             }else
             {
                 for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
                 {
-                    cv::Mat front = buf.front();
                     buf.pop_front();
-                    for (int i = 0; i < img.rows; ++i)
+                    sum = buf.front();
+                    std::for_each(buf.begin()+1, buf.end(), [&sum](cv::Mat& m)
                     {
-                        uchar* sumRow = sum.ptr<uchar>(i);
-                        uchar* imgRow = img.ptr<uchar>(i);
-                        uchar* frontRow = front.ptr<uchar>(i);
-                        for (int j = 0; j < img.cols * img.channels(); ++j)
-                        {
-                            if (sumRow[j] == frontRow[j])
-                                sumRow[j] = std::max_element(buf.begin(), buf.end(), comp(i,j))->at<uchar>(i,j);
-                            else
-                                sumRow[j] = std::max(imgRow[j], sumRow[j]);
-                        }
-                    }
-                }
+                                  sum = cv::max(sum, m);
+                });
             }
-            res = sum;
-            break;
+        }
+        res = sum;
+        break;
 
         case SimpleMode:
             res = img;
             break;
         case InfAverageMode:
-        {
             sum = cv::max(sum, img);
             res = sum;
-        }
             break;
-
-        case DashMode:
-            res = img;
-            break;
-        }
-        lmode = mode;
-        int lflipV = flipV;
-        int lflipH = flipH;
+    }
+    lmode = mode;
+    int lflipV = flipV;
+    int lflipH = flipH;
+    if (running)
         if (lflipV || lflipH)
         {
             cv::Mat flippedRes;
@@ -124,14 +98,10 @@ void VideoProcessor::run()
         }else
             wnd.imshow(res);
 
-        if (running)
-        {
-            emit needWaitKey();
-        }
-    }
-    qDebug() << "Thread loop end";
-    wnd.destroyWindow();
-    qDebug() << "Thread end";
+}
+qDebug() << "Thread loop end";
+wnd.destroyWindow();
+qDebug() << "Thread end";
 }
 
 void VideoProcessor::stop()

@@ -21,7 +21,7 @@ private:
     Calc();
     Calc(Calc&);
 public:
-    int evaluate(const QString& eq, bool& ok);
+    int evaluate(const QString &eq, bool& ok);
     static Calc& Instance();
     ~Calc();
 };

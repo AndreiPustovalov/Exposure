@@ -5,6 +5,7 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include "calc.h"
+#include <QTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionFlipVertical, SIGNAL(toggled(bool)), &vp, SLOT(setFlipVertical(bool)), Qt::DirectConnection);
     connect(ui->actionClear, SIGNAL(triggered()), &vp, SLOT(clear()), Qt::DirectConnection);
     connect(ui->actionFullScreen, SIGNAL(toggled(bool)), &vp, SLOT(setFullScreen(bool)), Qt::DirectConnection);
-    connect(&vp, SIGNAL(needWaitKey()), this, SLOT(callWaitKey()), Qt::BlockingQueuedConnection);
+    connect(&vp.getWnd(), SIGNAL(showImage(std::string&,cv::Mat&)), this, SLOT(showImage(std::string&,cv::Mat&)), Qt::BlockingQueuedConnection);
     vp.start();
 }
 
@@ -47,12 +48,9 @@ void MainWindow::radioToggled()
     vp.setMode(m);
 }
 
-void MainWindow::callWaitKey()
+void MainWindow::showImage(std::string &wname, cv::Mat &img)
 {
-    if (cv::waitKey(5) == 13)
-    {
-        ui->actionFullScreen->toggle();
-    }
+    cv::imshow(wname, img);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

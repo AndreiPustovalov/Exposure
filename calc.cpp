@@ -1,4 +1,5 @@
 #include "calc.h"
+#include <QDebug>
 
 Calc::Calc()
 {
@@ -23,7 +24,11 @@ Calc::Calc(Calc&)
 
 Calc::~Calc()
 {
-
+    std::for_each(operations.begin(), operations.end(), [](Operation* op){
+            delete op;
+            op = nullptr;
+    });
+    operations.clear();
 }
 
 int Calc::evaluate(const QString &eq, bool &ok)
@@ -41,7 +46,21 @@ int Calc::evaluate(const QString &eq, bool &ok)
 
         last_p = (*It)->getPriority();
 
-        int tPos = eq.lastIndexOf((*It)->str());
+        QString n_eq;
+        n_eq.reserve(eq.length());
+        int level = 0;
+        for (int i = 0; i < eq.length(); ++i)
+        {
+            if (level == 0)
+                n_eq[i] = eq.at(i);
+            else
+                n_eq[i] = '0';
+            if (eq.at(i) == '(')
+                ++level;
+            if (eq.at(i) == ')')
+                --level;
+        }
+        int tPos = n_eq.lastIndexOf((*It)->str());
         if (tPos > pos)
             if (!op || (op && op->getPriority() == (*It)->getPriority()) )
             {
@@ -51,8 +70,19 @@ int Calc::evaluate(const QString &eq, bool &ok)
     }
 
     if (pos == -1)
+    {
+        if (eq.at(0) == '(')
+        {
+            if (eq.at(eq.length()-1) == ')')
+                return evaluate(eq.mid(1, eq.length()-2), ok);
+            else
+            {
+                ok = false;
+                return 1;
+            }
+        }
         return eq.toInt(&ok);
-
+    }
     int left = evaluate(eq.left(pos), ok);
     int res;
     if (op->fast(left, res))

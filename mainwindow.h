@@ -22,7 +22,7 @@ public:
 private slots:
     void onError(QString mes);
     void radioToggled();
-    void callWaitKey();
+    void showImage(std::string& wname, cv::Mat &img);
 
     void on_lineEdit_textChanged(const QString &arg1);
 
