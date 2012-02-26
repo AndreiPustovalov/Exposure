@@ -24,7 +24,7 @@ private slots:
     void radioToggled();
     void showImage(std::string& wname, cv::Mat &img);
 
-    void on_lineEdit_textChanged(const QString &arg1);
+    void on_setCondition_clicked();
 
 private:
     Ui::MainWindow *ui;

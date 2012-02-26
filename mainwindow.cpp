@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "calc.h"
 #include <QTime>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -13,6 +14,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, QApplication::applicationDirPath());
+    QSettings sets(QSettings::IniFormat, QSettings::UserScope, "APSoft", "Exposure");
+    int size = sets.beginReadArray("Conditions");
+    for (int i = 0; i < size; ++i)
+    {
+        sets.setArrayIndex(i);
+        ui->conditionEdit->addItem(sets.value("val").toString());
+    }
+    sets.endArray();
+
     connect(&vp, SIGNAL(error(QString)), this, SLOT(onError(QString)));
     connect(ui->averageCountSlider, SIGNAL(valueChanged(int)), &vp, SLOT(setAverageCnt(int)), Qt::DirectConnection);
     connect(ui->actionFlipHorizontal, SIGNAL(toggled(bool)), &vp, SLOT(setFlipHorizontal(bool)), Qt::DirectConnection);
@@ -26,6 +37,14 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     qDebug() << "Main window destructor";
+    QSettings sets(QSettings::IniFormat, QSettings::UserScope, "APSoft", "Exposure");
+    sets.beginWriteArray("Conditions");
+    for (int i = 0; i < ui->conditionEdit->count(); ++i)
+    {
+        sets.setArrayIndex(i);
+        sets.setValue("val", ui->conditionEdit->itemText(i));
+    }
+    sets.endArray();
     delete ui;
 }
 
@@ -59,11 +78,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
     vp.stop();
     event->accept();
 }
-
-void MainWindow::on_lineEdit_textChanged(const QString &arg1)
+void MainWindow::on_setCondition_clicked()
 {
-    bool ok;
-    ui->debugLbl->setText(QString().setNum(Calc::Instance().evaluate(arg1, ok)));
-    if (!ok)
-        ui->debugLbl->setText("err");
+    vp.setCondition(ui->conditionEdit->currentText());
+    ui->conditionEdit->addItem(ui->conditionEdit->currentText());
 }

@@ -240,7 +240,10 @@ public:
 
     virtual int operator()(int left, int right)
     {
-        return left % right;
+        if (right>0)
+            return left % right;
+        else
+            return 0;
     }
 };
 #endif // OPERATIONS_HPP

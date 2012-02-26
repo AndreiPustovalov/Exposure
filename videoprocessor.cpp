@@ -35,6 +35,9 @@ void VideoProcessor::run()
     }
     QList<cv::Mat> buf;
     cv::Mat sum;
+    QString lCond;
+    m_conditionChanged = true;
+    int num = 0;
     while (running)
     {
         cv::Mat img, res;
@@ -49,59 +52,63 @@ void VideoProcessor::run()
             clear_flag = false;
         }
 
-        QString lCond;
         if (m_conditionChanged)
         {
             QMutexLocker locker(&m_conditionMutex);
             lCond = m_condition;
             m_conditionChanged = false;
         }
-        switch (mode)
+        bool ok;
+        int ev_res = Calc::Instance().evaluate(QString(lCond).replace("num", QString().setNum(num++)), ok);
+        if (!ok || ev_res)
         {
-        case AverageMode:
-            buf.push_back(img.clone());
-            if ((int)buf.size() <= aver_cnt)
+            switch (mode)
             {
-                sum = cv::max(sum, img);
-            }else
-            {
-                for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
+            case AverageMode:
+                buf.push_back(img.clone());
+                if ((int)buf.size() <= aver_cnt)
                 {
-                    buf.pop_front();
-                    sum = buf.front();
-                    std::for_each(buf.begin()+1, buf.end(), [&sum](cv::Mat& m)
+                    sum = cv::max(sum, img);
+                }else
+                {
+                    for (int i = 0; i < 1+((int)buf.size() > aver_cnt); ++i)
                     {
-                                  sum = cv::max(sum, m);
-                });
+                        buf.pop_front();
+                        sum = buf.front();
+                        std::for_each(buf.begin()+1, buf.end(), [&sum](cv::Mat& m)
+                        {
+                                      sum = cv::max(sum, m);
+                        });
+                    }
+                }
+                res = sum;
+                break;
+
+            case SimpleMode:
+                res = img;
+                break;
+            case InfAverageMode:
+                sum = cv::max(sum, img);
+                res = sum;
+                break;
             }
+            lmode = mode;
+            int lflipV = flipV;
+            int lflipH = flipH;
+            if (running)
+                if (lflipV || lflipH)
+                {
+                    cv::Mat flippedRes;
+                    cv::flip(res, flippedRes, 2-(lflipH | (lflipV << 1)));
+                    wnd.imshow(flippedRes);
+                }else
+                    wnd.imshow(res);
+
         }
-        res = sum;
-        break;
-
-        case SimpleMode:
-            res = img;
-            break;
-        case InfAverageMode:
-            sum = cv::max(sum, img);
-            res = sum;
-            break;
     }
-    lmode = mode;
-    int lflipV = flipV;
-    int lflipH = flipH;
-    if (running)
-        if (lflipV || lflipH)
-        {
-            cv::Mat flippedRes;
-            cv::flip(res, flippedRes, 2-(lflipH | (lflipV << 1)));
-            wnd.imshow(flippedRes);
-        }else
-            wnd.imshow(res);
-
-}
-qDebug() << "Thread loop end";
-wnd.destroyWindow();
-qDebug() << "Thread end";
+    qDebug() << "Thread loop end";
+    wnd.destroyWindow();
+    qDebug() << "Thread end";
 }
 
 void VideoProcessor::stop()
