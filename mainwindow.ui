@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
-    <height>308</height>
+    <width>455</width>
+    <height>290</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,7 +64,7 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>50</number>
+          <number>100</number>
          </property>
          <property name="value">
           <number>10</number>
@@ -99,7 +99,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Условие:</string>
+          <string>Условие (num - номер кадра):</string>
          </property>
         </widget>
        </item>
@@ -137,7 +137,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>428</width>
+     <width>455</width>
      <height>21</height>
     </rect>
    </property>
@@ -153,8 +153,6 @@
    <addaction name="actionFlipHorizontal"/>
    <addaction name="actionFlipVertical"/>
    <addaction name="actionFullScreen"/>
-   <addaction name="separator"/>
-   <addaction name="actionAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionClear">
@@ -167,15 +165,6 @@
    </property>
    <property name="toolTip">
     <string>Очистить...</string>
-   </property>
-  </action>
-  <action name="actionAbout">
-   <property name="icon">
-    <iconset resource="Icons.qrc">
-     <normaloff>:/icons/faq.png</normaloff>:/icons/faq.png</iconset>
-   </property>
-   <property name="text">
-    <string>About</string>
    </property>
   </action>
   <action name="actionFlipHorizontal">

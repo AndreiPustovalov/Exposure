@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, QApplication::applicationDirPath());
-    QSettings sets(QSettings::IniFormat, QSettings::SystemScope, "APSoft", "Exposure");
+    QSettings sets(QSettings::IniFormat, QSettings::SystemScope, "Exposure");
     int size = sets.beginReadArray("Conditions");
     for (int i = 0; i < size; ++i)
     {
@@ -23,6 +23,10 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->conditionEdit->addItem(sets.value("val").toString());
     }
     sets.endArray();
+    ui->conditionEdit->setEditText("");
+
+    ui->averageCountSlider->setMaximum(sets.value("max_N", QVariant(100)).toInt());
+    ui->averageCountSlider->setValue(sets.value("N", QVariant(10)).toInt());
 
     connect(&vp, SIGNAL(error(QString)), this, SLOT(onError(QString)));
     connect(ui->averageCountSlider, SIGNAL(valueChanged(int)), &vp, SLOT(setAverageCnt(int)), Qt::DirectConnection);
@@ -37,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     qDebug() << "Main window destructor";
-    QSettings sets(QSettings::IniFormat, QSettings::SystemScope, "APSoft", "Exposure");
+    QSettings sets(QSettings::IniFormat, QSettings::SystemScope, "Exposure");
     sets.beginWriteArray("Conditions");
     for (int i = 0; i < ui->conditionEdit->count(); ++i)
     {
@@ -45,6 +49,9 @@ MainWindow::~MainWindow()
         sets.setValue("val", ui->conditionEdit->itemText(i));
     }
     sets.endArray();
+
+    sets.setValue("max_N", QVariant(ui->averageCountSlider->maximum()));
+    sets.setValue("N", QVariant(ui->averageCountSlider->value()));
     delete ui;
 }
 
@@ -81,5 +88,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::on_setCondition_clicked()
 {
     vp.setCondition(ui->conditionEdit->currentText());
-    ui->conditionEdit->addItem(ui->conditionEdit->currentText());
+    if (ui->conditionEdit->findText(ui->conditionEdit->currentText()) == -1)
+        ui->conditionEdit->addItem(ui->conditionEdit->currentText());
 }
