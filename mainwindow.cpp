@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, QApplication::applicationDirPath());
-    QSettings sets(QSettings::IniFormat, QSettings::UserScope, "APSoft", "Exposure");
+    QSettings sets(QSettings::IniFormat, QSettings::SystemScope, "APSoft", "Exposure");
     int size = sets.beginReadArray("Conditions");
     for (int i = 0; i < size; ++i)
     {
@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     qDebug() << "Main window destructor";
-    QSettings sets(QSettings::IniFormat, QSettings::UserScope, "APSoft", "Exposure");
+    QSettings sets(QSettings::IniFormat, QSettings::SystemScope, "APSoft", "Exposure");
     sets.beginWriteArray("Conditions");
     for (int i = 0; i < ui->conditionEdit->count(); ++i)
     {
